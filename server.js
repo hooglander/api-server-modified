@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/list', async (req, res) => {
     try {
-        res.send(await getAll());
+        res.send(await getAll(req.query.name, req.query.rating));
     } catch( error ) {
         res.send(error);
     }

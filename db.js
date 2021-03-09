@@ -33,10 +33,29 @@ const connect = async () => {
     }
 };
 
-const getAll = async () => {
+const getAll = async (name, /*price_level,*/ rating) => {
+	/*const findParams = {
+		...((name? true: false) && {"name": {$regex: name, $options: i}}),
+		...((price_level? true: false) && {"price_level": price_level}),
+		...((rating? true: false) && {"rating": {$gte: rating}})
+	}*/
+	var findParams = {};
+	if(name) {
+		const regex = new RegExp(name, 'i');
+		findParams["name"] = {$regex: regex}
+	}
+	if(rating) {
+		findParams["rating"] = {$gte: rating};
+	}
+	
+	/*console.log('NAME IS ', name);
+	console.log('RATING IS ', rating);*/
+	/*console.log('FINDPARAMS NAME IS',findParams.name);
+	console.log('FINDPARAMS PRICE_LEVEL IS',findParams.price_level);
+	console.log('FINDPARAMS RATING IS',findParams.rating);*/
     try {
         if(!db) db = await connect();
-        const results = await Restaurant.find({}).exec();
+        const results = await Restaurant.find(findParams).exec();
         return results.map(restaurant => _.pick(restaurant, ['id', 'name', 'price_level', 'rating', 'location', 'photo']));
     } catch(error) {
         console.log(`Cannot fetch all from db: ${error}`);
